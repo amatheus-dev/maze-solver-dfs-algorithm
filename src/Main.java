@@ -1,5 +1,5 @@
 import java.util.Random;
-PS1='\[\033[01;36m\]\u@\[\033[00m\[\033[00m\]\w\[\033[01;37m\]\$ '
+
 public class Main {
     public static void main(String[] args) {
         Random random = new Random();
