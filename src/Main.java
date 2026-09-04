@@ -1,29 +1,30 @@
 public class Main {
     public static void main(String[] args) {
-        Labirinto labirinto = new Labirinto();
-        labirinto.showLabirinto();
-        boolean findTheX = labirinto.validBit(0, 0);
+        Labirinto.showLabirinto();
+        boolean findTheX = Labirinto.cellValidation(2, 0);
         if (findTheX){
-            labirinto.showPathMaze();
+            Labirinto.showPathMaze();
         }
     }
 }
 class Labirinto {
-    private final int[][] labirinto = {
-            {2, 0, 0, 0, 1, 0, 0, 0, 0, 0},
-            {1, 1, 1, 0, 1, 0, 1, 1, 1, 0},
-            {0, 0, 1, 0, 0, 0, 1, 0, 0, 0},
+    private static final int[][] labirinto = {
+            {0, 0, 1, 0, 1, 0, 1, 0, 0, 0},
+            {1, 0, 1, 0, 1, 0, 1, 1, 1, 0},
+            {2, 0, 0, 0, 0, 0, 1, 0, 0, 0},
             {0, 1, 1, 1, 1, 0, 1, 0, 1, 1},
             {0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
             {1, 1, 1, 0, 1, 1, 1, 1, 1, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
             {0, 1, 1, 1, 1, 1, 1, 0, 1, 0},
-            {0, 0, 0, 0, 0, 0, 1, 0, 0, 0},
-            {1, 1, 1, 1, 1, 0, 1, 1, 1, 3}
+            {0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
+            {1, 1, 1, 1, 1, 3, 1, 1, 1, 1}
     };
-    private final boolean[][] isVisited = new boolean[labirinto.length][labirinto[0].length];
-    String[][] pathMaze = new String[labirinto.length][labirinto[0].length];
-    public void showLabirinto() {
+    private static final boolean[][] isVisited = new boolean[labirinto.length][labirinto[0].length];
+    private static String[][] pathMaze = new String[labirinto.length][labirinto[0].length];
+    private static int[] findExit = new int[2];
+
+    public static void showLabirinto() {
         int controw = -1;
         for (int[] rows : labirinto) {
             controw++;
@@ -36,18 +37,17 @@ class Labirinto {
             }
             System.out.print("\n");
         }
-        System.out.println();
         for (int i = 0; i < isVisited.length; i++) {
             for (int j = 0; j < isVisited[i].length; j++) {
                 isVisited[i][j] = false;
-                pathMaze[i][j] = "  1  ";
+                pathMaze[i][j] = "wall";
+
             }
-            System.out.print("\n");
         }
 
     }
 
-    public boolean isValid(int rows, int column) {
+    public static boolean isValid(int rows, int column) {
         if (rows < labirinto.length && rows >= 0 && column < labirinto[rows].length && column >= 0) {
             if (labirinto[rows][column] == 0 || labirinto[rows][column] == 3) {
                 return !isVisited[rows][column];
@@ -55,22 +55,31 @@ class Labirinto {
         }
         return false;
     }
-    public String[][] setPathMaze(int row, int column){
-        pathMaze[row][column] = "  *  ";
-        return pathMaze;
-    }
 
-    public void showPathMaze(){
-        for(String[] row : pathMaze){
-            for (String column : row){
-                System.out.print(column);
-            }
-            System.out.print("\n");
+
+    public static void setPathMaze(int row, int column){
+        pathMaze[row][column] = " *  ";
+        if (labirinto[row][column] == 2){
+            pathMaze[row][column] = "head";
+        }
+        if (labirinto[row][column] == 3){
+            pathMaze[row][column] = "exit";
         }
     }
 
-    public boolean validBit(int rows, int column) {
-        boolean findTheX;
+    public static void showPathMaze(){
+        System.out.println();
+        for(String[] row : pathMaze){
+            for (String column : row){
+                System.out.print(column + " ");
+            }
+            System.out.print("\n");
+        }
+        System.out.println("\nSaída: " + findExit[0] + ", " + findExit[1]);
+    }
+
+    public static boolean cellValidation(int rows, int column) {
+        boolean isXfound;
         setPathMaze(rows, column);
         int upSide = rows - 1;
         int rightSide = column + 1;
@@ -81,38 +90,39 @@ class Labirinto {
         boolean isDownNeighbour = isValid(downSide, column);
         boolean isLeftNeighbour = isValid(rows, leftSide);
         if (labirinto[rows][column] == 3) {
-            System.out.println(rows + ", " + column);
+            findExit[0] = rows;
+            findExit[1] = column;
             return true;
         }
         else {
             if (isUpNeighbour) {
                 isVisited[upSide][column] = true;
-                findTheX = validBit(upSide, column);
-                if(findTheX){
+                isXfound = cellValidation(upSide, column);
+                if(isXfound){
                     return true;
                 }
 
             }
             if (isRightNeighbour) {
                 isVisited[rows][rightSide] = true;
-                findTheX = validBit(rows, rightSide);
-                if(findTheX){
+                isXfound = cellValidation(rows, rightSide);
+                if(isXfound){
                     return true;
                 }
 
             }
             if (isDownNeighbour) {
                 isVisited[downSide][column] = true;
-                findTheX = validBit(downSide, column);
-                if (findTheX){
+                isXfound = cellValidation(downSide, column);
+                if (isXfound){
                     return true;
                 }
 
             }
             if (isLeftNeighbour) {
                 isVisited[rows][leftSide] = true;
-                findTheX = validBit(rows, leftSide);
-                if(findTheX){
+                isXfound = cellValidation(rows, leftSide);
+                if(isXfound){
                     return true;
                 }
             }
