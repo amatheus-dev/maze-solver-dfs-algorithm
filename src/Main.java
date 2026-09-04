@@ -21,8 +21,8 @@ class Labirinto {
             {1, 1, 1, 1, 1, 3, 1, 1, 1, 1}
     };
     private static final boolean[][] isVisited = new boolean[labirinto.length][labirinto[0].length];
-    private static String[][] pathMaze = new String[labirinto.length][labirinto[0].length];
-    private static int[] findExit = new int[2];
+    private static final String[][] pathMaze = new String[labirinto.length][labirinto[0].length];
+    private static final int[] findExit = new int[2];
 
     public static void showLabirinto() {
         int controw = -1;
@@ -46,17 +46,6 @@ class Labirinto {
         }
 
     }
-
-    public static boolean isValid(int rows, int column) {
-        if (rows < labirinto.length && rows >= 0 && column < labirinto[rows].length && column >= 0) {
-            if (labirinto[rows][column] == 0 || labirinto[rows][column] == 3) {
-                return !isVisited[rows][column];
-            }
-        }
-        return false;
-    }
-
-
     public static void setPathMaze(int row, int column){
         pathMaze[row][column] = " *  ";
         if (labirinto[row][column] == 2){
@@ -66,18 +55,6 @@ class Labirinto {
             pathMaze[row][column] = "exit";
         }
     }
-
-    public static void showPathMaze(){
-        System.out.println();
-        for(String[] row : pathMaze){
-            for (String column : row){
-                System.out.print(column + " ");
-            }
-            System.out.print("\n");
-        }
-        System.out.println("\nSaída: " + findExit[0] + ", " + findExit[1]);
-    }
-
     public static boolean cellValidation(int rows, int column) {
         boolean isXfound;
         setPathMaze(rows, column);
@@ -98,35 +75,46 @@ class Labirinto {
             if (isUpNeighbour) {
                 isVisited[upSide][column] = true;
                 isXfound = cellValidation(upSide, column);
-                if(isXfound){
-                    return true;
-                }
+                return isXfound;
 
             }
             if (isRightNeighbour) {
                 isVisited[rows][rightSide] = true;
                 isXfound = cellValidation(rows, rightSide);
-                if(isXfound){
-                    return true;
-                }
+                return isXfound;
 
             }
             if (isDownNeighbour) {
                 isVisited[downSide][column] = true;
                 isXfound = cellValidation(downSide, column);
-                if (isXfound){
-                    return true;
-                }
+                return isXfound;
 
             }
             if (isLeftNeighbour) {
                 isVisited[rows][leftSide] = true;
                 isXfound = cellValidation(rows, leftSide);
-                if(isXfound){
-                    return true;
-                }
+                return isXfound;
             }
             return false;
         }
     }
+    public static boolean isValid(int rows, int column) {
+        if (rows < labirinto.length && rows >= 0 && column < labirinto[rows].length && column >= 0) {
+            if (labirinto[rows][column] == 0 || labirinto[rows][column] == 3) {
+                return !isVisited[rows][column];
+            }
+        }
+        return false;
+    }
+    public static void showPathMaze(){
+        System.out.println();
+        for(String[] row : pathMaze){
+            for (String column : row){
+                System.out.print(column + " ");
+            }
+            System.out.print("\n");
+        }
+        System.out.println("\nSaída: " + findExit[0] + ", " + findExit[1]);
+    }
+
 }
