@@ -1,4 +1,4 @@
-# Maze Solver - Depth-First-Search
+# Maze Solver (Depth-First-Search)
 
 A console-based maze solver written in Java, built as a study project to practice 2D arrays, recursion and backtracking.
 
